@@ -1,0 +1,14 @@
+pytest
+pytest-bdd >= 4.0.0
+pytest-cov
+pytest-json-report
+pytest-mock
+pytest-xdist == 1.34.0
+coverage
+docstr-coverage
+darglint
+mock
+tox
+pylint
+pylint_junit
+pylint2junit
