@@ -5,6 +5,7 @@ import json
 import logging
 import os
 
+from random import randint
 from typing import Mapping, Optional, Text
 
 from ska.skuid.client import SkuidClient
@@ -49,11 +50,11 @@ class Transaction:
 
     Log message formats:
        On Entry:
-           Transaction [id]: Enter [name] with parameters [arguments]
+           Transaction[id]: Enter[name] with parameters [arguments] marker[marker]
        On Exit:
-           Transaction [id]: Exit [name]
+           Transaction[id]: Exit[name] marker[marker]
        On exception:
-           Transaction [id]: Exception [name]
+           Transaction[id]: Exception[name] marker[marker]
            Stacktrace
     """
 
@@ -114,6 +115,11 @@ class Transaction:
 
         self._transaction_id = self._get_id_from_params_or_generate_new_id(transaction_id)
 
+        # Used to match enter and exit when multiple devices calls the same command
+        # on a shared device simultaneously
+        self._random_marker = str(randint(0, 99999)).zfill(5)
+
+
         if transaction_id and params.get(self._transaction_id_key):
             self.logger.info(
                 f"Received 2 transaction IDs {transaction_id} and"
@@ -123,16 +129,22 @@ class Transaction:
     def __enter__(self):
         params_json = json.dumps(self._params)
         self.logger.info(
-            f"Transaction [{self._transaction_id}]: Enter[{self._name}] "
-            f"with parameters[{params_json}]"
+            f"Transaction[{self._transaction_id}]: Enter[{self._name}] "
+            f"with parameters [{params_json}] "
+            f"marker[{self._random_marker}]"
         )
         return self._transaction_id
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type:
-            self.logger.exception(f"Transaction[{self._transaction_id}]: Exception[{self._name}]")
+            self.logger.exception(
+                f"Transaction[{self._transaction_id}]: Exception[{self._name}] marker[{self._random_marker}]"
+            )
 
-        self.logger.info(f"Transaction[{self._transaction_id}]: Exit[{self._name}]")
+        self.logger.info(
+            f"Transaction[{self._transaction_id}]: Exit[{self._name}] "
+            f"marker[{self._random_marker}]"
+        )
 
         if exc_type:
             raise

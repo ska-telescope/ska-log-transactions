@@ -120,6 +120,10 @@ def get_named_handler(logger, name):
                 return handler
         logger = logger.parent
 
+def clear_logger_logs(logger):
+    recorder = get_named_handler(logger, "recorder")
+    recorder.logs = []
+    recorder.records = []
 
 @pytest.fixture
 def id_generator_stub(mocker):
