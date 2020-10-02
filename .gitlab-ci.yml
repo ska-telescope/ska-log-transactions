@@ -32,6 +32,8 @@ test:
       - ./build
 
 list_dependencies:
+  tags:
+    - docker-executor
   stage: test
   script:
     - pipdeptree --json >> pip_deps.json
