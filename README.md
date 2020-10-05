@@ -28,7 +28,7 @@ from ska.log_transactions import async_transaction
 
 async def command(self, parameter_json):
     parameters = json.reads(parameter_json)
-    async with transaction('My Command', parameters) as transaction_id:
+    async with async_transaction('My Command', parameters) as transaction_id:
         # ...
         parameters['transaction_id'] = transaction_id
         device.further_command(json.dumps(parameters))
@@ -76,6 +76,8 @@ The system used for development needs to have Python 3 and `pip` installed.
 
 ## Install
 
+### From source
+
 - Clone the repo
 
 ```bash
@@ -92,6 +94,12 @@ git clone git@gitlab.com:ska-telescope/ska-log-transactions.git
 
 ```bash
  python3 -m pip install .
+```
+
+### From the Nexus PyPI
+
+```bash
+ pip3 install ska-log-transactions   --extra-index-url https://nexus.engageska-portugal.pt/repository/pypi/simple
 ```
 
 ## Testing
