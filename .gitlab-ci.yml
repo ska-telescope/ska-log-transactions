@@ -98,12 +98,9 @@ publish package to nexus:
   variables:
     TWINE_USERNAME: $TWINE_USERNAME
     TWINE_PASSWORD: $TWINE_PASSWORD
-    PACKAGE_TAG: $CI_COMMIT_SHORT_SHA
   script:
-    # check metadata requirements
-    #- scripts/validate-metadata.sh
     - python3 -m pip install twine
-    - tox -e package # takes $PACKAGE_TAG as input
+    - tox -e package
     - twine upload --repository-url $PYPI_REPOSITORY_URL dist/*
   only:
     refs:
