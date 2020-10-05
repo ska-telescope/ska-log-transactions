@@ -2,16 +2,12 @@
 
 """Module init code."""
 
-__all__ = (
-    "transaction",
-)
+__all__ = ("transaction", "async_transaction")
 __author__ = "Anton Joubert"
 __email__ = "ajoubert+ska@ska.ac.za"
 
 
-from .transactions import (
-    Transaction as transaction,
-)
+from .transactions import Transaction as transaction, AsyncTransaction as async_transaction
 
 
 # BEGIN VERSION CHECK

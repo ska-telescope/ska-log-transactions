@@ -11,7 +11,7 @@ from typing import Mapping, Optional, Text
 from ska.skuid.client import SkuidClient
 
 
-class Transaction:
+class TransactionBase:
     """Transaction context handler.
 
     Provides:
@@ -25,7 +25,7 @@ class Transaction:
 
        def command(self, parameter_json):
            parameters = json.reads(parameter_json)
-           with ska.logging.transaction('My Command', parameters) as transaction_id:
+           with transaction('My Command', parameters) as transaction_id:
                # ...
                parameters['transaction_id'] = transaction_id
                device.further_command(json.dumps(pars))
@@ -33,7 +33,7 @@ class Transaction:
 
        def command(self, parameter_json):
            parameters = json.reads(parameter_json)
-           with ska.logging.transaction('My Command', parameters, transaction_id="123") as transaction_id:
+           with transaction('My Command', parameters, transaction_id="123") as transaction_id:
                # ...
                parameters['transaction_id'] = transaction_id
                device.further_command(json.dumps(pars))
@@ -42,7 +42,8 @@ class Transaction:
        def command(self, parameter_json):
            parameters = json.reads(parameter_json)
            parameters["txn_id_key"] = 123
-           with ska.logging.transaction('My Command', parameters, transaction_id_key="txn_id_key") as transaction_id:
+           with transaction('My Command', parameters, transaction_id_key="txn_id_key")
+               as transaction_id:
                # ...
                parameters['transaction_id'] = transaction_id
                device.further_command(json.dumps(pars))
@@ -119,26 +120,34 @@ class Transaction:
         # on a shared device simultaneously
         self._random_marker = str(randint(0, 99999)).zfill(5)
 
-
         if transaction_id and params.get(self._transaction_id_key):
             self.logger.info(
                 f"Received 2 transaction IDs {transaction_id} and"
                 f" {params.get(transaction_id_key)}, using {self._transaction_id}"
             )
 
-    def __enter__(self):
+    def log_entry(self):
+        """Log the entry message
+        """
         params_json = json.dumps(self._params)
         self.logger.info(
             f"Transaction[{self._transaction_id}]: Enter[{self._name}] "
             f"with parameters [{params_json}] "
             f"marker[{self._random_marker}]"
         )
-        return self._transaction_id
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def log_exit(self, exc_type):
+        """Log the exit message and exception if it occurs
+
+        Parameters
+        ----------
+        exc_type : exception_type
+            The exception type
+        """
         if exc_type:
             self.logger.exception(
-                f"Transaction[{self._transaction_id}]: Exception[{self._name}] marker[{self._random_marker}]"
+                f"Transaction[{self._transaction_id}]: Exception[{self._name}] "
+                f"marker[{self._random_marker}]"
             )
 
         self.logger.info(
@@ -147,7 +156,7 @@ class Transaction:
         )
 
         if exc_type:
-            raise
+            raise  # pylint: disable=E0704
 
     def _get_id_from_params_or_generate_new_id(self, transaction_id):
         """At first use the transaction_id passed or use the transaction_id_key to get the
@@ -200,10 +209,65 @@ class Transaction:
         return id_generator.next()  # pylint: disable=E1102
 
 
+class Transaction(TransactionBase):
+    def __enter__(self):
+        """Context handler entry
+
+        Returns
+        -------
+        String
+            The transaction ID
+        """
+        self.log_entry()
+        return self._transaction_id
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context handler exit
+
+        Parameters
+        ----------
+        exc_type : exception_type
+            The exception type
+        exc_val : exception_value
+            The exception value
+        exc_tb : exception_traceback
+            The exception traceback
+        """
+        self.log_exit(exc_type)
+
+
+class AsyncTransaction(TransactionBase):
+    async def __aenter__(self):
+        """Asynchronous context handler entry
+
+        Returns
+        -------
+        String
+            The transaction ID
+        """
+        self.log_entry()
+        return self._transaction_id
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Asynchronous context handler exit
+
+        Parameters
+        ----------
+        exc_type : exception_type
+            The exception type
+        exc_val : exception_value
+            The exception value
+        exc_tb : exception_traceback
+            The exception traceback
+        """
+        self.log_exit(exc_type)
+
+
 class TransactionIdGenerator:
     """
     TransactionIdGenerator retrieves a transaction id from skuid.
-    Skuid may fetch the id from the service if the SKUID_URL is set or alternatively generate one.
+    Skuid may fetch the id from the service if the SKUID_URL is set or
+    alternatively generate one.
     """
 
     def __init__(self):
