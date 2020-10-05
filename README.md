@@ -54,20 +54,20 @@ The marker can be used to match entry/exception/exit log messages.
 
 ```txt
 
-1|2020-10-01T12:49:31.119Z|INFO|Thread-210|thread_with_transaction_exception|test_transactions_threaded.py#23|transaction_id:txn-local-20201001-981667980|Transaction[txn-local-20201001-981667980]: Enter[Command] with parameters [{}] marker[52764]
-1|2020-10-01T12:49:31.129Z|INFO|Thread-210|thread_with_transaction_exception|test_transactions_threaded.py#23|transaction_id:txn-local-20201001-981667980|Transaction[txn-local-20201001-981667980]: Exit[Command] marker[52764]
+1|2020-10-01T12:49:31.119Z|INFO|Thread-210|log_entry|transactions.py#154||Transaction[txn-local-20201001-981667980]: Enter[Command] with parameters [{}] marker[52764]
+1|2020-10-01T12:49:31.129Z|INFO|Thread-210|log_exit|transactions.py#154||Transaction[txn-local-20201001-981667980]: Exit[Command] marker[52764]
 ```
 
 *Example ska formatted logs for failed transaction**
 
 ```txt
-1|2020-10-01T12:51:35.588Z|INFO|Thread-204|thread_with_transaction_exception|test_transactions_threaded.py#23|transaction_id:txn-local-20201001-354400050|Transaction[txn-local-20201001-354400050]: Enter[Transaction thread [7]] with parameters [{}] marker[21454]
-1|2020-10-01T12:51:35.598Z|ERROR|Thread-204|thread_with_transaction_exception|test_transactions_threaded.py#23|transaction_id:txn-local-20201001-354400050|Transaction[txn-local-20201001-354400050]: Exception[Transaction thread [7]] marker[21454]
+1|2020-10-01T12:51:35.588Z|INFO|Thread-204|log_entry|transactions.py#154||Transaction[txn-local-20201001-354400050]: Enter[Transaction thread [7]] with parameters [{}] marker[21454]
+1|2020-10-01T12:51:35.598Z|ERROR|Thread-204|log_exit|transactions.py#149||Transaction[txn-local-20201001-354400050]: Exception[Transaction thread [7]] marker[21454]
 Traceback (most recent call last):
   File "python_file.py", line 27, in thread_with_transaction_exception
     raise RuntimeError("An exception has occurred")
 RuntimeError: An exception has occurred
-1|2020-10-01T12:51:35.601Z|INFO|Thread-204|thread_with_transaction_exception|test_transactions_threaded.py#23|transaction_id:txn-local-20201001-354400050|Transaction[txn-local-20201001-354400050]: Exit[Transaction thread [7]] marker[21454]
+1|2020-10-01T12:51:35.601Z|INFO|Thread-204|log_exit|transactions.py#154||Transaction[txn-local-20201001-354400050]: Exit[Transaction thread [7]] marker[21454]
 ```
 
 ## Requirements
