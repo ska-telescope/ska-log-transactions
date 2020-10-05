@@ -6,12 +6,29 @@
 
 A transaction context handler is available to inject ids fetched from the the skuid service into logs. The transaction id will be logged on entry and exit of the context handler. In the event of an exception, the transaction id will be logged with the exception stack trace. The ID generated depends on whether or not the SKUID_URL environment variable is set.
 
+### Example
+
 ```python
 from ska.log_transactions import transaction
 
 def command(self, parameter_json):
     parameters = json.reads(parameter_json)
     with transaction('My Command', parameters) as transaction_id:
+        # ...
+        parameters['transaction_id'] = transaction_id
+        device.further_command(json.dumps(parameters))
+        # ...
+
+```
+
+### Asynchronous Example
+
+```python
+from ska.log_transactions import async_transaction
+
+async def command(self, parameter_json):
+    parameters = json.reads(parameter_json)
+    async with transaction('My Command', parameters) as transaction_id:
         # ...
         parameters['transaction_id'] = transaction_id
         device.further_command(json.dumps(parameters))
