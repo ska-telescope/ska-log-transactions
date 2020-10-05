@@ -36,7 +36,7 @@ setup(
     keywords="tango ska logging transactions",
     python_requires=">=3.5",
     test_suite="tests",
-    install_requires=["katversion"],
+    install_requires=["katversion", "ska_logging >= 0.3.0", "ska-skuid"],
     use_katversion=True,
     tests_require=["tox"],
 )
