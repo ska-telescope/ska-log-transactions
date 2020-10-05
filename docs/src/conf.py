@@ -19,12 +19,20 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../src'))
 import sphinx_rtd_theme
+
+from m2r import MdInclude
+
+sys.path.insert(0, os.path.abspath('../../src'))
 
 def setup(app):
     app.add_stylesheet('css/custom.css')
     app.add_javascript('js/github.js')
+    app.add_config_value('no_underscore_emphasis', False, 'env')
+    app.add_config_value('m2r_parse_relative_links', False, 'env')
+    app.add_config_value('m2r_anonymous_references', False, 'env')
+    app.add_config_value('m2r_disable_inline_math', False, 'env')
+    app.add_directive('mdinclude', MdInclude)
 
 # -- General configuration ------------------------------------------------
 

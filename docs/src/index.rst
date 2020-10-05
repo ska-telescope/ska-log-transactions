@@ -22,7 +22,7 @@
    :maxdepth: 2
    :caption: Readme
 
-   README
+.. mdinclude:: ../../README.md
 
 .. COMMUNITY SECTION ==================================================
 
