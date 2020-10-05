@@ -1,6 +1,6 @@
 # SKA Transaction Logging utility
 
-[![Documentation Status](https://readthedocs.org/projects/ska-log-transactions/badge/?version=latest)](https://developer.skatelescope.org/projects/ska-log-log-transactions/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/ska-telescope-ska-log-transactions/badge/?version=latest)](https://ska-telescope-ska-log-transactions.readthedocs.io/en/latest/?badge=latest)
 
 ## Logging Transaction IDs
 
