@@ -15,13 +15,15 @@ class TransactionBase:
     """Transaction context handler.
 
     Provides:
-    - Transaction ID:
-      - Re-use existing transaction ID, if available
-      - If no transaction ID, or empty or None, then generate a new ID
-      - context handler returns the transaction ID used
-    - Log messages on entry, exit, and exception
 
-    .. Examples::
+    | - Transaction ID::
+    |     * Re-use existing transaction ID, if available
+    |     * If no transaction ID, or empty or None, then generate a new ID
+    |     * context handler returns the transaction ID used
+    | - Log messages on entry, exit, and exception
+
+
+    .. code-block:: python
 
        def command(self, parameter_json):
            parameters = json.reads(parameter_json)
@@ -49,14 +51,16 @@ class TransactionBase:
                device.further_command(json.dumps(pars))
                # ...
 
-    Log message formats:
-       On Entry:
-           Transaction[id]: Enter[name] with parameters [arguments] marker[marker]
-       On Exit:
-           Transaction[id]: Exit[name] marker[marker]
-       On exception:
-           Transaction[id]: Exception[name] marker[marker]
-           Stacktrace
+    | Log message formats:
+    |    On Entry:
+    |        Transaction[id]: Enter[name] with parameters [arguments] marker[marker]
+    |    On Exit:
+    |        Transaction[id]: Exit[name] marker[marker]
+    |    On exception:
+    |        Transaction[id]: Exception[name] marker[marker]
+    |        Stacktrace
+
+
     """
 
     def __init__(
@@ -82,27 +86,22 @@ class TransactionBase:
         `params`. If a different key is required then `transaction_id_key` can be
         specified.
 
-        Parameters
-        ----------
-        name : str
-            A description for the context. This is usually the Tango device command.
-        params : dict, optional
-            The parameters will be logged and will be used to retrieve the transaction
-            ID if `transaction_id` is not passed in, by default {}
-        transaction_id : str, optional
-            The transaction ID to be used for the context, by default ""
-        transaction_id_key : str, optional
-            The key to use to get the transaction ID from params,
-            by default "transaction_id"
-        logger : logging.Logger, optional
-            The logger to use for logging, by default None.
-            If no logger is specified a new one named `ska.transaction` will be used.
 
-        Raises
-        ------
-        TransactionParamsError
-            If the `params` passed is not valid.
+        :param name: A description for the context. This is usually the Tango device command.
+        :type name: str
+        :param params: The parameters will be logged and will be used to retrieve the transaction
+            ID if `transaction_id` is not passed in, defaults to {}
+        :type params: dict
+        :param transaction_id: The transaction ID to be used for the context, defaults to ""
+        :type transaction_id: str
+        :param transaction_id_key: The key to use to get the transaction ID from params, defaults to "transaction_id"
+        :type transaction_id_key: str
+        :param logger: The logger to use for logging, by default None.
+            If no logger is specified a new one named `ska.transaction` will be used.
+        :type logger: Optional[logging.Logger], optional
+        :raises TransactionParamsError:  If the `params` passed is not valid.
         """
+
         if not isinstance(params, Mapping):
             raise TransactionParamsError("params must be dict-like (Mapping)")
 
@@ -139,10 +138,8 @@ class TransactionBase:
     def log_exit(self, exc_type):
         """Log the exit message and exception if it occurs
 
-        Parameters
-        ----------
-        exc_type : exception_type
-            The exception type
+        :param exc_type: Exception type
+        :type exc_type: exception_type
         """
         if exc_type:
             self.logger.exception(
@@ -162,15 +159,10 @@ class TransactionBase:
         """At first use the transaction_id passed or use the transaction_id_key to get the
         transaction ID from the parameters or generate a new one if it's not there.
 
-        Parameters
-        ----------
-        transaction_id : [String]
-            [The transaction ID]
-
-        Returns
-        -------
-        [String]
-            [transaction ID]
+        :param transaction_id: The transaction ID
+        :type transaction_id: String
+        :return: A transaction ID
+        :rtype: String
         """
         _transaction_id = (
             transaction_id if transaction_id else self._params.get(self._transaction_id_key)
@@ -183,15 +175,10 @@ class TransactionBase:
     def _is_valid_id(self, transaction_id):
         """Check if the ID is valid
 
-        Parameters
-        ----------
-        transaction_id : [String]
-            [The transaction ID]
-
-        Returns
-        -------
-        [bool]
-            [Whether the ID is valid or not]
+        :param transaction_id: The transaction ID
+        :type transaction_id: String
+        :return: Whether the ID is valid or not
+        :rtype: boolean
         """
         if isinstance(transaction_id, Text) and transaction_id.strip():
             return True
@@ -200,10 +187,8 @@ class TransactionBase:
     def _generate_new_id(self):
         """Use TransactionIdGenerator to generate a new transaction ID
 
-        Returns
-        -------
-        [String]
-            [The newly generated transaction ID]
+        :return: The transaction ID
+        :rtype: String
         """
         id_generator = TransactionIdGenerator()
         return id_generator.next()  # pylint: disable=E1102
@@ -213,10 +198,8 @@ class Transaction(TransactionBase):
     def __enter__(self):
         """Context handler entry
 
-        Returns
-        -------
-        String
-            The transaction ID
+        :return: The transaction ID
+        :rtype: String
         """
         self.log_entry()
         return self._transaction_id
@@ -224,14 +207,12 @@ class Transaction(TransactionBase):
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Context handler exit
 
-        Parameters
-        ----------
-        exc_type : exception_type
-            The exception type
-        exc_val : exception_value
-            The exception value
-        exc_tb : exception_traceback
-            The exception traceback
+        :param exc_type: The exception type
+        :type exc_type: exception_type
+        :param exc_val: The exception value
+        :type exc_val: exception_value
+        :param exc_tb: The exception traceback
+        :type exc_tb: exception_traceback
         """
         self.log_exit(exc_type)
 
@@ -240,10 +221,8 @@ class AsyncTransaction(TransactionBase):
     async def __aenter__(self):
         """Asynchronous context handler entry
 
-        Returns
-        -------
-        String
-            The transaction ID
+        :return: The transaction ID
+        :rtype: String
         """
         self.log_entry()
         return self._transaction_id
@@ -251,14 +230,12 @@ class AsyncTransaction(TransactionBase):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Asynchronous context handler exit
 
-        Parameters
-        ----------
-        exc_type : exception_type
-            The exception type
-        exc_val : exception_value
-            The exception value
-        exc_tb : exception_traceback
-            The exception traceback
+        :param exc_type: The exception type
+        :type exc_type: exception_type
+        :param exc_val: The exception value
+        :type exc_val: exception_value
+        :param exc_tb: The exception traceback
+        :type exc_tb: exception_traceback
         """
         self.log_exit(exc_type)
 
