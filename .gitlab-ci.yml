@@ -24,7 +24,7 @@ stages:
 test:
   stage: test
   tags:
-    - docker-executor
+    - k8srunner
   script:
     - tox -e py37
   artifacts:
@@ -33,7 +33,7 @@ test:
 
 linting:
   tags:
-    - docker-executor
+    - k8srunner
   stage: linting
   script:
     - tox -e lint
@@ -44,7 +44,7 @@ linting:
 
 docs:
   tags:
-    - docker-executor
+    - k8srunner
   stage: docs
   before_script:
     - echo "error" > .docs_status
@@ -66,7 +66,7 @@ docs:
 build wheel:
   stage: package
   tags:
-    - docker-executor
+    - k8srunner
   script:
     # check metadata requirements
     - pip3 install katversion
@@ -79,7 +79,7 @@ build wheel:
 publish package to nexus:
   stage: publish
   tags:
-    - docker-executor
+    - k8srunner
   variables:
     TWINE_USERNAME: $TWINE_USERNAME
     TWINE_PASSWORD: $TWINE_PASSWORD
@@ -99,7 +99,7 @@ publish package to nexus:
 pages:
   stage: deploy
   tags:
-    - docker-executor
+    - k8srunner
   dependencies:
     - test
   script:
@@ -117,7 +117,7 @@ create ci metrics:
   image: nexus.engageska-portugal.pt/ska-docker/ska-python-buildenv:latest
   when: always
   tags:
-    - docker-executor
+    - k8srunner
   script:
     # Gitlab CI badges creation: START
     - apt-get -y update
