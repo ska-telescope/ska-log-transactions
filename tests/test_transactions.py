@@ -28,16 +28,38 @@ class TestTransactionIdGeneration:
             with transaction("name", parameters):
                 pass
 
-    parameters = {"other": "config", "transaction_id": "xyz123", "other_transaction_id_key": "def789"}
-    @pytest.mark.parametrize("input_args, txn_id", 
-    [
-        ({"name":"name", "params":parameters, "transaction_id":"abc1234"}, "abc1234"),
-        ({"name":"name", "params":parameters, "transaction_id_key":"other_transaction_id_key"}, "def789"),
-        ({"name":"name", "params":parameters, "transaction_id":"abc1234", "transaction_id_key":"other_transaction_id_key"}, "abc1234"),
-    ])
-    def test_preference_order(self, input_args, txn_id):
+    parameters = {
+        "other": "config",
+        "transaction_id": "xyz123",
+        "other_transaction_id_key": "def789",
+    }
+
+    @pytest.mark.parametrize(
+        "input_args, expected_txn_id",
+        [
+            ({"name": "name", "params": parameters, "transaction_id": "abc1234"}, "abc1234"),
+            (
+                {
+                    "name": "name",
+                    "params": parameters,
+                    "transaction_id_key": "other_transaction_id_key",
+                },
+                "def789",
+            ),
+            (
+                {
+                    "name": "name",
+                    "params": parameters,
+                    "transaction_id": "abc1234",
+                    "transaction_id_key": "other_transaction_id_key",
+                },
+                "abc1234",
+            ),
+        ],
+    )
+    def test_preference_order(self, input_args, expected_txn_id):
         with transaction(**input_args) as transaction_id:
-            assert transaction_id == txn_id
+            assert transaction_id == expected_txn_id
 
     def test_new_id_generated_if_invalid_ids_passed_in_params(self, id_generator_stub):
         parameters = {
