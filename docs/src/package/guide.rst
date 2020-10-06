@@ -19,8 +19,23 @@ The API for the configuration using Python is shown below.
 
 Public API Documentation
 ````````````````````````
-Functions
----------
+Imports
+-------
 
 .. automodule:: ska.log_transactions
-    :members:
+  :members:
+  :undoc-members:
+
+Classes
+-------
+
+.. autoclass:: ska.log_transactions.transactions.TransactionBase
+  :members:
+  :undoc-members:
+.. autoclass:: ska.log_transactions.transactions.Transaction
+  :members:
+  :undoc-members:
+.. autoclass:: ska.log_transactions.transactions.AsyncTransaction
+  :members:
+  :undoc-members:
+.. autoclass:: ska.log_transactions.transactions.TransactionIdGenerator
