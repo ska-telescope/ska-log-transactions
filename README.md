@@ -31,12 +31,13 @@ async def command(self, parameter_json):
     async with async_transaction('My Command', parameters) as transaction_id:
         # ...
         parameters['transaction_id'] = transaction_id
-        device.further_command(json.dumps(parameters))
+        await device.further_command(json.dumps(parameters))
         # ...
 
 ```
 
-The context handler logs to the root logger by default. Logs can be sent to a custom logger by passing a logger object as a keyword argument. Use `configure_logging` method for ska formatted logs.
+By default the context handler logs to the `ska.transaction` logger with default formatting.
+A custom logger can be used by passing it in via an optional argument.
 
 *Example ska formatted logs for successful transaction**
 
