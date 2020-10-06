@@ -19,7 +19,7 @@
 #
 
 from unittest.mock import Mock as MagicMock
-autodoc_mock_imports = ["ska.skuid.client"]
+autodoc_mock_imports = ["ska.skuid", "ska.skuid.client"]
 
 
 import os
