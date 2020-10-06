@@ -1,9 +1,6 @@
 .. doctest-skip-all
 .. _package-guide:
 
-.. todo::
-    - Insert todo's here
-
 *****************
 API documentation
 *****************

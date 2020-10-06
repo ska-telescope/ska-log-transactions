@@ -12,3 +12,4 @@ tox
 pylint
 pylint_junit
 pylint2junit
+darglint
