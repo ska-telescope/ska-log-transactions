@@ -34,11 +34,12 @@ class Mock(MagicMock):
         return MagicMock()
 
 
-MOCK_MODULES = []
+MOCK_MODULES = ["logging"]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
 sys.path.insert(0, os.path.abspath("../../src"))
+sys.path.insert(0, os.path.abspath("../../src/ska"))
 
 
 def setup(app):
