@@ -28,37 +28,16 @@ class TestTransactionIdGeneration:
             with transaction("name", parameters):
                 pass
 
-    def test_preference_order(self, id_generator_stub):
-        parameters = {
-            "other": "config",
-            "transaction_id": "xyz123",
-            "other_transaction_id_key": "def789",
-        }
-        with transaction("name", parameters, transaction_id="abc1234") as transaction_id:
-            assert transaction_id == "abc1234"
-
-        parameters = {
-            "other": "config",
-            "transaction_id": "xyz123",
-            "other_transaction_id_key": "def789",
-        }
-        with transaction(
-            "name", parameters, transaction_id_key="other_transaction_id_key"
-        ) as transaction_id:
-            assert transaction_id == "def789"
-
-        parameters = {
-            "other": "config",
-            "transaction_id": "xyz123",
-            "other_transaction_id_key": "def789",
-        }
-        with transaction(
-            "name",
-            parameters,
-            transaction_id="abc1234",
-            transaction_id_key="other_transaction_id_key",
-        ) as transaction_id:
-            assert transaction_id == "abc1234"
+    parameters = {"other": "config", "transaction_id": "xyz123", "other_transaction_id_key": "def789"}
+    @pytest.mark.parametrize("input_args, txn_id", 
+    [
+        ({"name":"name", "params":parameters, "transaction_id":"abc1234"}, "abc1234"),
+        ({"name":"name", "params":parameters, "transaction_id_key":"other_transaction_id_key"}, "def789"),
+        ({"name":"name", "params":parameters, "transaction_id":"abc1234", "transaction_id_key":"other_transaction_id_key"}, "abc1234"),
+    ])
+    def test_preference_order(self, input_args, txn_id):
+        with transaction(**input_args) as transaction_id:
+            assert transaction_id == txn_id
 
     def test_new_id_generated_if_invalid_ids_passed_in_params(self, id_generator_stub):
         parameters = {
@@ -112,7 +91,7 @@ class TestTransactionIdGeneration:
 class TestTransactionLogging:
     """Tests for :class:`~ska.logging.transaction` related to logging."""
 
-    def test_name_and_id_and_params_in_context_handler(self, id_generator_stub, recording_logger):
+    def test_name_and_id_and_params_in_context_handler(self, recording_logger):
         parameters = {"other": ["config", 1, 2, 3.0]}
         with transaction("name", parameters) as transaction_id:
             pass
@@ -133,7 +112,7 @@ class TestTransactionLogging:
         assert "name" in last_log_message
         assert transaction_id in last_log_message
 
-    def test_exception_logs_transaction_id_and_command(self, id_generator_stub, recording_logger):
+    def test_exception_logs_transaction_id_and_command(self, recording_logger):
         parameters = {"other": ["config", 1, 2, 3.0]}
         with pytest.raises(RuntimeError):
             with transaction("name", parameters) as transaction_id:
