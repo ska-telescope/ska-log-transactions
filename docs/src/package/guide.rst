@@ -22,6 +22,7 @@ Imports
 .. automodule:: ska.log_transactions
   :members:
   :undoc-members:
+  :show-inheritance:
 
 Classes
 -------
@@ -32,7 +33,9 @@ Classes
 .. autoclass:: ska.log_transactions.transactions.Transaction
   :members:
   :undoc-members:
+  :show-inheritance:
 .. autoclass:: ska.log_transactions.transactions.AsyncTransaction
   :members:
   :undoc-members:
+  :show-inheritance:
 .. autoclass:: ska.log_transactions.transactions.TransactionIdGenerator
