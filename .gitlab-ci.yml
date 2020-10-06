@@ -31,21 +31,6 @@ test:
     paths:
       - ./build
 
-list_dependencies:
-  tags:
-    - docker-executor
-  stage: test
-  script:
-    - pipdeptree --json >> pip_deps.json
-    - pipdeptree >> pip_deps.txt
-    - mkdir .public
-    - cp pip_deps.txt .public/
-    - cp pip_deps.json .public/
-    - mv .public public
-  artifacts:
-    paths:
-      - public
-
 linting:
   tags:
     - docker-executor

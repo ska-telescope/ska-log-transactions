@@ -31,12 +31,13 @@ async def command(self, parameter_json):
     async with async_transaction('My Command', parameters) as transaction_id:
         # ...
         parameters['transaction_id'] = transaction_id
-        device.further_command(json.dumps(parameters))
+        await device.further_command(json.dumps(parameters))
         # ...
 
 ```
 
-The context handler logs to the root logger by default. Logs can be sent to a custom logger by passing a logger object as a keyword argument. Use `configure_logging` method for ska formatted logs.
+By default the context handler logs to the `ska.transaction` logger with default formatting.
+A custom logger can be used by passing it in via an optional argument.
 
 *Example ska formatted logs for successful transaction**
 
@@ -52,7 +53,7 @@ Log message formats:
 
 The marker can be used to match entry/exception/exit log messages.
 
-```txt
+```
 
 1|2020-10-01T12:49:31.119Z|INFO|Thread-210|log_entry|transactions.py#154||Transaction[txn-local-20201001-981667980]: Enter[Command] with parameters [{}] marker[52764]
 1|2020-10-01T12:49:31.129Z|INFO|Thread-210|log_exit|transactions.py#154||Transaction[txn-local-20201001-981667980]: Exit[Command] marker[52764]
@@ -60,7 +61,7 @@ The marker can be used to match entry/exception/exit log messages.
 
 *Example ska formatted logs for failed transaction**
 
-```txt
+```
 1|2020-10-01T12:51:35.588Z|INFO|Thread-204|log_entry|transactions.py#154||Transaction[txn-local-20201001-354400050]: Enter[Transaction thread [7]] with parameters [{}] marker[21454]
 1|2020-10-01T12:51:35.598Z|ERROR|Thread-204|log_exit|transactions.py#149||Transaction[txn-local-20201001-354400050]: Exception[Transaction thread [7]] marker[21454]
 Traceback (most recent call last):
