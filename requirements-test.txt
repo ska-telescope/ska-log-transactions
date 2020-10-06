@@ -8,7 +8,6 @@ coverage
 docstr-coverage
 darglint
 mock
-tox
 pylint
 pylint_junit
 pylint2junit
