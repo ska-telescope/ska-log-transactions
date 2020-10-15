@@ -36,10 +36,28 @@ async def command(self, parameter_json):
 
 ```
 
+### Custom logger example
+
 By default the context handler logs to the `ska.transaction` logger with default formatting.
 A custom logger can be used by passing it in via an optional argument.
 
-*Example ska formatted logs for successful transaction**
+```python
+import logging
+from ska.log_transactions import transaction
+
+custom_logger = logging.getLogger(__name__)
+
+def command(self, parameter_json):
+    parameters = json.reads(parameter_json)
+    with transaction('My Command', parameters, logger=custom_logger) as transaction_id:
+        # ...
+        parameters['transaction_id'] = transaction_id
+        device.further_command(json.dumps(parameters))
+        # ...
+
+```
+
+### Log messages
 
 Log message formats:
 
@@ -53,13 +71,15 @@ Log message formats:
 
 The marker can be used to match entry/exception/exit log messages.
 
+#### Example ska formatted logs for successful transaction
+
 ```
 
 1|2020-10-01T12:49:31.119Z|INFO|Thread-210|log_entry|transactions.py#154||Transaction[txn-local-20201001-981667980]: Enter[Command] with parameters [{}] marker[52764]
 1|2020-10-01T12:49:31.129Z|INFO|Thread-210|log_exit|transactions.py#154||Transaction[txn-local-20201001-981667980]: Exit[Command] marker[52764]
 ```
 
-*Example ska formatted logs for failed transaction**
+#### Example ska formatted logs for failed transaction
 
 ```
 1|2020-10-01T12:51:35.588Z|INFO|Thread-204|log_entry|transactions.py#154||Transaction[txn-local-20201001-354400050]: Enter[Transaction thread [7]] with parameters [{}] marker[21454]
@@ -100,7 +120,7 @@ git clone git@gitlab.com:ska-telescope/ska-log-transactions.git
 ### From the Nexus PyPI
 
 ```bash
- pip3 install ska-log-transactions   --extra-index-url https://nexus.engageska-portugal.pt/repository/pypi/simple
+ python3 -m pip install ska-log-transactions --extra-index-url https://nexus.engageska-portugal.pt/repository/pypi/simple
 ```
 
 ## Testing
